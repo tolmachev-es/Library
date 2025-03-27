@@ -6,8 +6,8 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 public class UploadRequest {
     private List<Data> data;

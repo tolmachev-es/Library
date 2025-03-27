@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface SenderService {
 
-    void send(List<LibrarySubscriptionEntity> subscriptions);
+    void send(List<LibrarySubscriptionEntity> subscriptionEntities);
 }

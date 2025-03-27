@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 @Table(name = "subscription_book")
 public class BookInSubscriptionEntity {
     @EmbeddedId
@@ -21,19 +23,13 @@ public class BookInSubscriptionEntity {
     @JoinColumn(name = "subscription_id", insertable = false, referencedColumnName = "id")
     private LibrarySubscriptionEntity subscription;
 
-    @OneToOne
+    @ManyToOne
     @MapsId("bookId")
     @JoinColumn(name = "book_id", insertable = false, referencedColumnName = "book_id")
     private BookEntity book;
 
     @Column(name = "start_date")
     private LocalDate startDate;
-
-    public BookInSubscriptionEntity(LibrarySubscriptionEntity subscription, BookEntity book) {
-        this.subscription = subscription;
-        this.book = book;
-        this.bookSubscriptionId = new BookSubscriptionId(subscription.getId(), book.getId());
-    }
 
     public void setBook(BookEntity book) {
         this.book = book;
@@ -50,5 +46,4 @@ public class BookInSubscriptionEntity {
         }
         bookSubscriptionId.setSubscriptionId(subscription != null ? subscription.getId() : null);
     }
-
 }

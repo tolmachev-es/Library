@@ -14,3 +14,4 @@ spring:
       table-prefix: BATCH_
 scheduler:
   days: 20
+  cron: "0 0 */6 * * *"

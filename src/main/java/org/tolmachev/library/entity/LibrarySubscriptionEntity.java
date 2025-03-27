@@ -5,12 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -23,13 +19,16 @@ public class LibrarySubscriptionEntity {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Column(name = "username", unique = true)
+    private String username;
+
     @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "is_active")
     private Boolean active;
 
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<BookInSubscriptionEntity> books = new HashSet<>();
 
     public void addBook(BookEntity book) {
@@ -37,18 +36,5 @@ public class LibrarySubscriptionEntity {
         bookInSubscriptionEntity.setBook(book);
         bookInSubscriptionEntity.setSubscription(this);
         books.add(bookInSubscriptionEntity);
-    }
-
-    public void addAllBooks(Collection<BookEntity> book) {
-        Set<BookInSubscriptionEntity> collect = book.stream()
-                                                    .map(m -> new BookInSubscriptionEntity(this, m))
-                                                    .collect(Collectors.toSet());
-        books.addAll(collect);
-    }
-
-    public List<BookEntity> getAllBooks() {
-        return books.stream()
-                    .map(BookInSubscriptionEntity::getBook)
-                    .toList();
     }
 }

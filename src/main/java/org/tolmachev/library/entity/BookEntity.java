@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,7 +20,7 @@ public class BookEntity {
     @Column(name = "book_id", nullable = false)
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "author")
@@ -27,6 +29,6 @@ public class BookEntity {
     @Column(name = "publish_date")
     private LocalDate publishDate;
 
-    @OneToOne(mappedBy = "book", orphanRemoval = true)
-    private BookInSubscriptionEntity subscription;
+    @OneToMany(mappedBy = "book", orphanRemoval = true)
+    private Set<BookInSubscriptionEntity> subscription = new HashSet<>();
 }
