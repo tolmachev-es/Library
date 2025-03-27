@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Library
+  datasource:
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:6541/library
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+  batch:
+    jdbc:
+      table-prefix: BATCH_
+scheduler:
+  days: 20
