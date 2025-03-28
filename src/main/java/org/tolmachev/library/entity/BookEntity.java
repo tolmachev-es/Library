@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -34,5 +35,19 @@ public class BookEntity {
 
     public void addSubscription(BookInSubscriptionEntity bookInSubscriptionEntity) {
         this.subscription.add(bookInSubscriptionEntity);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        BookEntity that = (BookEntity) o;
+        return Objects.equals(name, that.name) && Objects.equals(author, that.author) && Objects.equals(publishDate,
+                that.publishDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, author, publishDate);
     }
 }

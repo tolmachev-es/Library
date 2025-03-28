@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -51,5 +52,18 @@ public class BookInSubscriptionEntity {
             bookSubscriptionId = new BookSubscriptionId();
         }
         bookSubscriptionId.setSubscriptionId(subscription != null ? subscription.getId() : null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        BookInSubscriptionEntity that = (BookInSubscriptionEntity) o;
+        return Objects.equals(subscription, that.subscription) && Objects.equals(book, that.book);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(subscription, book);
     }
 }

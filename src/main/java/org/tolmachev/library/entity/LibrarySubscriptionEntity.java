@@ -28,12 +28,13 @@ public class LibrarySubscriptionEntity {
     @Column(name = "is_active")
     private Boolean active;
 
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<BookInSubscriptionEntity> books = new HashSet<>();
 
-    public synchronized void addBook(BookEntity book) {
+    public BookInSubscriptionEntity addBook(BookEntity book) {
         BookInSubscriptionEntity bookInSubscriptionEntity = new BookInSubscriptionEntity(this, book);
         bookInSubscriptionEntity.getBook().addSubscription(bookInSubscriptionEntity);
         books.add(bookInSubscriptionEntity);
+        return bookInSubscriptionEntity;
     }
 }

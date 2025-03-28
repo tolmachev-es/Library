@@ -4,16 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tolmachev.library.entity.BookEntity;
+import org.tolmachev.library.entity.BookInSubscriptionEntity;
 import org.tolmachev.library.entity.LibrarySubscriptionEntity;
 import org.tolmachev.library.model.Data;
 import org.tolmachev.library.model.UploadRequest;
 import org.tolmachev.library.repository.BookEntityRepository;
+import org.tolmachev.library.repository.BookInSubscriptionEntityRepository;
 import org.tolmachev.library.repository.LibrarySubscriptionEntityRepository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,7 +26,9 @@ public class LibraryUpdateService {
     private final LibrarySubscriptionEntityRepository libraryRepository;
     private final ConcurrentHashMap<String, LibrarySubscriptionEntity> subscriptions = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, BookEntity> books = new ConcurrentHashMap<>();
+    private final CopyOnWriteArrayList<BookInSubscriptionEntity> bookInSubscriptions = new CopyOnWriteArrayList<>();
     private final BookEntityRepository bookRepository;
+    private final BookInSubscriptionEntityRepository bookInSubscriptionRepository;
     ExecutorService executor = Executors.newFixedThreadPool(4);
 
     @Transactional
@@ -33,7 +38,10 @@ public class LibraryUpdateService {
                                                              .toList();
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).join();
         bookRepository.saveAll(books.values());
+
         libraryRepository.saveAll(subscriptions.values());
+        bookInSubscriptionRepository.saveAll(bookInSubscriptions);
+        bookInSubscriptions.clear();
         subscriptions.clear();
         books.clear();
     }
@@ -52,7 +60,6 @@ public class LibraryUpdateService {
                 bookEntity.setName(data.getBookName());
                 bookEntity.setAuthor(data.getBookAuthor());
             }
-            books.put(data.getBookName(), bookEntity);
         }
 
         LibrarySubscriptionEntity subscription;
@@ -68,8 +75,12 @@ public class LibraryUpdateService {
                 subscription.setActive(data.getUserActive());
                 subscription.setFullName(data.getUserFullName());
             }
-            subscriptions.put(data.getUsername(), subscription);
         }
-        subscription.addBook(bookEntity);
+        subscriptions.put(data.getUsername(), subscription);
+        if (books.containsKey(data.getBookName())) {
+            bookEntity = books.get(data.getBookName());
+        }
+        books.put(data.getBookName(), bookEntity);
+        bookInSubscriptions.add(subscription.addBook(bookEntity));
     }
 }
