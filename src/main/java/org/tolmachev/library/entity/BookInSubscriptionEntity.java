@@ -31,6 +31,12 @@ public class BookInSubscriptionEntity {
     @Column(name = "start_date")
     private LocalDate startDate;
 
+    public BookInSubscriptionEntity(LibrarySubscriptionEntity subscription, BookEntity book) {
+        this.subscription = subscription;
+        this.book = book;
+        this.bookSubscriptionId = new BookSubscriptionId(subscription.getId(), book.getId());
+    }
+
     public void setBook(BookEntity book) {
         this.book = book;
         if (bookSubscriptionId == null) {

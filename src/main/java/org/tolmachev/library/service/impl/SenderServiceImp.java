@@ -4,13 +4,13 @@ import org.springframework.stereotype.Service;
 import org.tolmachev.library.entity.LibrarySubscriptionEntity;
 import org.tolmachev.library.service.SenderService;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
 public class SenderServiceImp implements SenderService {
 
     @Override
-    public void send(List<LibrarySubscriptionEntity> subscriptions) {
+    public void send(Set<LibrarySubscriptionEntity> subscriptions) {
 
     }
 }

@@ -31,10 +31,9 @@ public class LibrarySubscriptionEntity {
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.PERSIST, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<BookInSubscriptionEntity> books = new HashSet<>();
 
-    public void addBook(BookEntity book) {
-        BookInSubscriptionEntity bookInSubscriptionEntity = new BookInSubscriptionEntity();
-        bookInSubscriptionEntity.setBook(book);
-        bookInSubscriptionEntity.setSubscription(this);
+    public synchronized void addBook(BookEntity book) {
+        BookInSubscriptionEntity bookInSubscriptionEntity = new BookInSubscriptionEntity(this, book);
+        bookInSubscriptionEntity.getBook().addSubscription(bookInSubscriptionEntity);
         books.add(bookInSubscriptionEntity);
     }
 }

@@ -1,7 +1,5 @@
 package org.tolmachev.library.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,28 +21,21 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class LibraryUpdateService {
     private final LibrarySubscriptionEntityRepository libraryRepository;
-
     private final ConcurrentHashMap<String, LibrarySubscriptionEntity> subscriptions = new ConcurrentHashMap<>();
-
     private final ConcurrentHashMap<String, BookEntity> books = new ConcurrentHashMap<>();
-
     private final BookEntityRepository bookRepository;
-    private final ObjectMapper objectMapper;
+    ExecutorService executor = Executors.newFixedThreadPool(4);
 
     @Transactional
-    public void updateDatabase(String data) throws JsonProcessingException {
-        try(ExecutorService executor = Executors.newFixedThreadPool(4)) {
-            UploadRequest uploadRequest = objectMapper.readValue(data, UploadRequest.class);
-
-
-            List<CompletableFuture<Void>> futures = uploadRequest.getData().stream()
-                                                                 .map(item -> CompletableFuture.runAsync(() -> createData(item), executor))
-                                                                 .toList();
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).join();
-            libraryRepository.saveAll(subscriptions.values());
-            subscriptions.clear();
-            books.clear();
-        }
+    public void updateDatabase(UploadRequest uploadRequest) {
+        List<CompletableFuture<Void>> futures = uploadRequest.getData().stream()
+                                                             .map(item -> CompletableFuture.runAsync(() -> createData(item), executor))
+                                                             .toList();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).join();
+        bookRepository.saveAll(books.values());
+        libraryRepository.saveAll(subscriptions.values());
+        subscriptions.clear();
+        books.clear();
     }
 
 

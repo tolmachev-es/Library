@@ -31,4 +31,8 @@ public class BookEntity {
 
     @OneToMany(mappedBy = "book", orphanRemoval = true)
     private Set<BookInSubscriptionEntity> subscription = new HashSet<>();
+
+    public void addSubscription(BookInSubscriptionEntity bookInSubscriptionEntity) {
+        this.subscription.add(bookInSubscriptionEntity);
+    }
 }

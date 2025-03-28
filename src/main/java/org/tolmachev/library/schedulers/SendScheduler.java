@@ -17,18 +17,16 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class SendScheduler {
     @Value("${scheduler.days}")
-    private String days;
+    private Integer days;
     private final SenderService senderService;
     private final LibrarySubscriptionEntityRepository subscriptionRepository;
 
 
     @Scheduled(cron = "${scheduler.cron}")
     public void runSenderService() {
-        LocalDate now = LocalDate.now();
+        LocalDate now = LocalDate.now().minusDays(days);
 
         Set<LibrarySubscriptionEntity> subscription = subscriptionRepository.findSubscription(now);
-        for (LibrarySubscriptionEntity subscriptionEntity : subscription) {
-            log.info("send to {}", subscriptionEntity.getUsername());
-        }
+        senderService.send(subscription);
     }
 }
