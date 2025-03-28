@@ -25,8 +25,9 @@ public class SendScheduler {
     @Scheduled(cron = "${scheduler.cron}")
     public void runSenderService() {
         LocalDate now = LocalDate.now().minusDays(days);
-
+        log.info("Началась отправка сообщений пользователям");
         Set<LibrarySubscriptionEntity> subscription = subscriptionRepository.findSubscription(now);
+        log.info("Отправка закончена");
         senderService.send(subscription);
     }
 }

@@ -19,9 +19,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 
     @Override
-    public Subscription getSubscription(String fio) {
-        return subscriptionMapper.map(libraryRepository.findLibrarySubscriptionEntityByFullNameIgnoreCase(fio)
-                                .orElseThrow(() -> new SubscriptionNotFoundException(String.format("Пользователь с именем %s не найден", fio))));
+    public Subscription getSubscription(String userFullName) {
+        return subscriptionMapper.map(libraryRepository.findLibrarySubscriptionEntityByFullNameIgnoreCase(userFullName)
+                                .orElseThrow(() -> new SubscriptionNotFoundException(String.format("Пользователь с именем %s не найден", userFullName))));
 
     }
 

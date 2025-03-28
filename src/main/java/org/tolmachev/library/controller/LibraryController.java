@@ -36,7 +36,7 @@ public class LibraryController {
     })
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    Subscription search(@RequestParam(name = "fio") String fio) {
-        return libraryService.getSubscription(fio);
+    Subscription search(@RequestParam(name = "userFullName") String userFullName) {
+        return libraryService.getSubscription(userFullName);
     }
 }

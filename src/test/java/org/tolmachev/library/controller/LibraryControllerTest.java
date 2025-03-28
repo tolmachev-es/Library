@@ -38,9 +38,9 @@ class LibraryControllerTest {
 
     @Test
     void handleSubscriptionFound() {
-        String name = "test user";
-        assertDoesNotThrow(() ->  libraryController.search(name));
-        verify(libraryService, times(1)).getSubscription(name);
+        String userFullName = "test user";
+        assertDoesNotThrow(() ->  libraryController.search(userFullName));
+        verify(libraryService, times(1)).getSubscription(userFullName);
     }
 
     @Test
